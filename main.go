@@ -4,6 +4,8 @@ import (
   "fmt"
   "encoding/csv"
   "os"
+  "time"
+  "flag"
 )
 
 func readCsvFile(filePath string) ([][]string, error){
@@ -38,15 +40,29 @@ func main() {
   
   n := len(ques)
   totalMarks := 0
+  timeLimit := flag.Int("limit", 30, "the time limit for the quiz in seconds")
+  flag.Parse()
+  timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
   for i, que := range ques {
-    var ans string
-    fmt.Printf("Que %v: %v", i, que[0])
-    fmt.Scan(&ans)
-    if que[1] == ans {
-      totalMarks++
+    fmt.Printf("Que %v: %v \n", i, que[0])
+    ansCh := make(chan string)
+
+    go func() {
+      var ans string
+      fmt.Scanf("%s \n", &ans)
+      ansCh <- ans
+    }()
+
+    select {
+    case <-timer.C: 
+      fmt.Printf("\nYou Scored %d out %d \n", totalMarks, n)
+      return 
+    case ans := <-ansCh:
+      if ans == que[1] {
+        totalMarks++
+      }
     }
   }
-
-  fmt.Printf("your score is %v out %v", totalMarks, n)
+  fmt.Printf("\nYou Scored %d out %d \n", totalMarks, n)
 }
