@@ -7,7 +7,7 @@ This is a simple quiz game written in Go.
 1. Clone the repository using the following command:
 
 ```
-git clone https://github.com/yourusername/quiz-game.git
+git clone git@github.com:tusharr-patil/QuizGameInGo.git
 ```
 
 2. Build the project by running the following command in the root directory of the project:
